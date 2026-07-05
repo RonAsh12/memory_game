@@ -3,6 +3,7 @@ import GameInfo from './components/GameInfo'
 import Board from './components/Board'
 import DifficultySelector from './components/DifficultySelector'
 import Stats from './components/Stats'
+import BackgroundDecoration from './components/BackgroundDecoration'
 import { createCards } from './utils/cards'
 import { getPairCount } from './utils/difficulty'
 import { useTimer } from './hooks/useTimer'
@@ -115,30 +116,36 @@ function App() {
 
   if (!difficulty) {
     return (
-      <div className="app">
-        <DifficultySelector onSelect={handleSelectDifficulty} />
-        <Stats stats={stats} onClear={handleClearStats} />
-      </div>
+      <>
+        <BackgroundDecoration />
+        <div className="app">
+          <DifficultySelector onSelect={handleSelectDifficulty} />
+          <Stats stats={stats} onClear={handleClearStats} />
+        </div>
+      </>
     )
   }
 
   return (
-    <div className="app">
-      <GameInfo moves={moves} elapsedSeconds={elapsedSeconds} />
-      {isGameWon && (
-        <p className="win-message">🎉 ניצחת! מצאת את כל הזוגות ב-{moves} מהלכים.</p>
-      )}
-      <Board cards={cards} onCardClick={handleCardClick} />
-      <div className="game-actions">
-        <button className="new-game-button" onClick={handleNewGame}>
-          התחל משחק חדש
-        </button>
-        <button className="change-difficulty-button" onClick={handleChangeDifficulty}>
-          רמת קושי חדשה
-        </button>
+    <>
+      <BackgroundDecoration />
+      <div className="app">
+        <GameInfo moves={moves} elapsedSeconds={elapsedSeconds} />
+        {isGameWon && (
+          <p className="win-message">🎉 ניצחת! מצאת את כל הזוגות ב-{moves} מהלכים.</p>
+        )}
+        <Board cards={cards} onCardClick={handleCardClick} />
+        <div className="game-actions">
+          <button className="new-game-button" onClick={handleNewGame}>
+            התחל משחק חדש
+          </button>
+          <button className="change-difficulty-button" onClick={handleChangeDifficulty}>
+            רמת קושי חדשה
+          </button>
+        </div>
+        <Stats stats={stats} onClear={handleClearStats} />
       </div>
-      <Stats stats={stats} onClear={handleClearStats} />
-    </div>
+    </>
   )
 }
 
