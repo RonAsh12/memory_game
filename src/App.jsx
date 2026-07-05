@@ -5,6 +5,7 @@ import DifficultySelector from './components/DifficultySelector'
 import DeckTypeSelector from './components/DeckTypeSelector'
 import Stats from './components/Stats'
 import BackgroundDecoration from './components/BackgroundDecoration'
+import WinConfetti from './components/WinConfetti'
 import { createCards, buildCardsFromValues } from './utils/cards'
 import { getPairCount } from './utils/difficulty'
 import { DEFAULT_DECK_TYPE } from './utils/deckTypes'
@@ -172,7 +173,10 @@ function App() {
         ) : (
           <>
             {isGameWon && (
-              <p className="win-message">🎉 ניצחת! מצאת את כל הזוגות ב-{moves} מהלכים.</p>
+              <>
+                <WinConfetti />
+                <p className="win-message">🎉 ניצחת! מצאת את כל הזוגות ב-{moves} מהלכים.</p>
+              </>
             )}
             <Board cards={cards} onCardClick={handleCardClick} />
           </>
