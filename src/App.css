@@ -2,9 +2,13 @@
   position: relative;
   z-index: 1;
   max-width: 1280px;
-  margin: 0 auto;
+  margin: 2rem auto;
   padding: 2rem;
   text-align: center;
+  background-color: #ffffff;
+  color: #213547;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
 }
 
 .win-message {
@@ -23,6 +27,8 @@
 
 @media (max-width: 480px) {
   .app {
+    margin: 1rem auto;
     padding: 1rem;
+    border-radius: 12px;
   }
 }
