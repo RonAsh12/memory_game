@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import GameInfo from './components/GameInfo'
 import Board from './components/Board'
 import DifficultySelector from './components/DifficultySelector'
+import Stats from './components/Stats'
 import { createCards } from './utils/cards'
 import { getPairCount } from './utils/difficulty'
 import { useTimer } from './hooks/useTimer'
+import { getStats, saveGameResult, clearStats } from './utils/stats'
 import './App.css'
 
 const MISMATCH_DELAY_MS = 800
@@ -16,20 +18,40 @@ function App() {
   const [moves, setMoves] = useState(0)
   const [isComparing, setIsComparing] = useState(false)
   const [hasStarted, setHasStarted] = useState(false)
+  const [hasSavedResult, setHasSavedResult] = useState(false)
+  const [stats, setStats] = useState(() => getStats())
   const { elapsedSeconds, start, stop, reset } = useTimer()
 
   const isGameWon = cards.length > 0 && cards.every((card) => card.isMatched)
 
   useEffect(() => {
-    if (isGameWon) stop()
-  }, [isGameWon, stop])
+    if (!isGameWon) return
+    stop()
+    if (hasSavedResult) return
+
+    setStats(
+      saveGameResult({
+        difficulty,
+        moves,
+        elapsedSeconds,
+        date: new Date().toISOString(),
+      }),
+    )
+    setHasSavedResult(true)
+  }, [isGameWon, stop, hasSavedResult, difficulty, moves, elapsedSeconds])
 
   function resetGameState() {
     setSelectedIds([])
     setMoves(0)
     setIsComparing(false)
     setHasStarted(false)
+    setHasSavedResult(false)
     reset()
+  }
+
+  function handleClearStats() {
+    clearStats()
+    setStats([])
   }
 
   function handleSelectDifficulty(difficultyKey) {
@@ -95,6 +117,7 @@ function App() {
     return (
       <div className="app">
         <DifficultySelector onSelect={handleSelectDifficulty} />
+        <Stats stats={stats} onClear={handleClearStats} />
       </div>
     )
   }
@@ -114,6 +137,7 @@ function App() {
           רמת קושי חדשה
         </button>
       </div>
+      <Stats stats={stats} onClear={handleClearStats} />
     </div>
   )
 }
