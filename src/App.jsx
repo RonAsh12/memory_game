@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import GameInfo from './components/GameInfo'
 import Board from './components/Board'
 import { createCards } from './utils/cards'
+import { useTimer } from './hooks/useTimer'
 import './App.css'
 
 const MISMATCH_DELAY_MS = 800
@@ -11,14 +12,22 @@ function App() {
   const [selectedIds, setSelectedIds] = useState([])
   const [moves, setMoves] = useState(0)
   const [isComparing, setIsComparing] = useState(false)
+  const [hasStarted, setHasStarted] = useState(false)
+  const { elapsedSeconds, start, stop, reset } = useTimer()
 
   const isGameWon = cards.every((card) => card.isMatched)
+
+  useEffect(() => {
+    if (isGameWon) stop()
+  }, [isGameWon, stop])
 
   function handleNewGame() {
     setCards(createCards())
     setSelectedIds([])
     setMoves(0)
     setIsComparing(false)
+    setHasStarted(false)
+    reset()
   }
 
   function handleCardClick(id) {
@@ -26,6 +35,11 @@ function App() {
 
     const clickedCard = cards.find((card) => card.id === id)
     if (clickedCard.isFlipped || clickedCard.isMatched) return
+
+    if (!hasStarted) {
+      setHasStarted(true)
+      start()
+    }
 
     const flippedCards = cards.map((card) =>
       card.id === id ? { ...card, isFlipped: true } : card,
@@ -60,7 +74,7 @@ function App() {
 
   return (
     <div className="app">
-      <GameInfo moves={moves} />
+      <GameInfo moves={moves} elapsedSeconds={elapsedSeconds} />
       {isGameWon && (
         <p className="win-message">🎉 ניצחת! מצאת את כל הזוגות ב-{moves} מהלכים.</p>
       )}
