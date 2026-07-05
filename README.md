@@ -1,8 +1,21 @@
-# React + Vite
+# Card Memory Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+משחק זיכרון (Card Memory Game) הבנוי ב-React ו-Vite, כפרויקט מסכם לאוניברסיטה.
 
-Currently, two official plugins are available:
+לפרטים מלאים על דרישות הפרויקט ראו [PRD.md](./PRD.md), ולתוכנית העבודה ראו [tasks.md](./tasks.md).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## הרצת הפרויקט
+
+```bash
+npm install
+npm run dev
+```
+
+לאחר מכן ניתן לגשת לאפליקציה בכתובת שתוצג בטרמינל (בדרך כלל `http://localhost:5173`).
+
+## סקריפטים זמינים
+
+- `npm run dev` - הרצת שרת הפיתוח עם Hot Module Replacement
+- `npm run build` - בניית גרסת production
+- `npm run preview` - תצוגה מקדימה של גרסת ה-build
+- `npm run lint` - הרצת ESLint על הקוד
