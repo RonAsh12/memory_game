@@ -1,7 +1,7 @@
 import Card from './Card'
 import './Board.css'
 
-function Board({ cards }) {
+function Board({ cards, onCardClick }) {
   const columns = Math.round(Math.sqrt(cards.length))
 
   return (
@@ -15,6 +15,7 @@ function Board({ cards }) {
           value={card.value}
           isFlipped={card.isFlipped}
           isMatched={card.isMatched}
+          onClick={() => onCardClick(card.id)}
         />
       ))}
     </div>
