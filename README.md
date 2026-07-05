@@ -1,6 +1,6 @@
 # Card Memory Game
-
-משחק זיכרון (Card Memory Game) הבנוי ב-React ו-Vite, כפרויקט מסכם לאוניברסיטה.
+פרויקט מסכם:
+משחק זיכרון (Card Memory Game) הבנוי ב-React ו-Vite.
 
 לפרטים מלאים על דרישות הפרויקט ראו [PRD.md](./PRD.md), ולתוכנית העבודה ראו [tasks.md](./tasks.md).
 
