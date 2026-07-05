@@ -9,6 +9,7 @@
   max-width: 480px;
   margin: 0 auto;
   border-collapse: collapse;
+  font-size: clamp(0.8rem, 3vw, 1rem);
 }
 
 .stats-table th,

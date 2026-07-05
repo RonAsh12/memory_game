@@ -5,7 +5,8 @@
 .game-info-stats {
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
   font-size: 1.1rem;
 }
 
