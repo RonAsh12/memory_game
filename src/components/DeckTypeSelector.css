@@ -1,0 +1,16 @@
+.deck-type-selector {
+  margin-top: 1.5rem;
+}
+
+.deck-type-options {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.deck-type-options button.is-selected {
+  border-color: #646cff;
+  font-weight: 700;
+}

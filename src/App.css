@@ -17,6 +17,18 @@
   margin-bottom: 1rem;
 }
 
+.deck-loading-message {
+  font-size: 1.1rem;
+  color: #888;
+  margin: 2rem 0;
+}
+
+.deck-error-message {
+  font-size: 0.95rem;
+  color: #e0554a;
+  margin-bottom: 1rem;
+}
+
 .game-actions {
   display: flex;
   justify-content: center;

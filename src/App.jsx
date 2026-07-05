@@ -2,15 +2,35 @@ import { useEffect, useState } from 'react'
 import GameInfo from './components/GameInfo'
 import Board from './components/Board'
 import DifficultySelector from './components/DifficultySelector'
+import DeckTypeSelector from './components/DeckTypeSelector'
 import Stats from './components/Stats'
 import BackgroundDecoration from './components/BackgroundDecoration'
-import { createCards } from './utils/cards'
+import { createCards, buildCardsFromValues } from './utils/cards'
 import { getPairCount } from './utils/difficulty'
+import { DEFAULT_DECK_TYPE } from './utils/deckTypes'
+import { fetchFlagValues } from './utils/flagsApi'
 import { useTimer } from './hooks/useTimer'
 import { getStats, saveGameResult, clearStats } from './utils/stats'
 import './App.css'
 
 const MISMATCH_DELAY_MS = 800
+const FLAGS_FALLBACK_MESSAGE =
+  'לא ניתן היה לטעון את חפיסת דגלי המדינות. הופעלה חפיסה רגילה במקום.'
+
+async function loadDeck(difficultyKey, deckType) {
+  const pairCount = getPairCount(difficultyKey)
+
+  if (deckType !== 'flags') {
+    return { cards: createCards(pairCount), error: null }
+  }
+
+  try {
+    const flagValues = await fetchFlagValues(pairCount)
+    return { cards: buildCardsFromValues(flagValues), error: null }
+  } catch {
+    return { cards: createCards(pairCount), error: FLAGS_FALLBACK_MESSAGE }
+  }
+}
 
 function App() {
   const [difficulty, setDifficulty] = useState(null)
@@ -21,6 +41,9 @@ function App() {
   const [hasStarted, setHasStarted] = useState(false)
   const [hasSavedResult, setHasSavedResult] = useState(false)
   const [stats, setStats] = useState(() => getStats())
+  const [deckType, setDeckType] = useState(DEFAULT_DECK_TYPE)
+  const [isLoadingDeck, setIsLoadingDeck] = useState(false)
+  const [deckError, setDeckError] = useState(null)
   const { elapsedSeconds, start, stop, reset } = useTimer()
 
   const isGameWon = cards.length > 0 && cards.every((card) => card.isMatched)
@@ -55,20 +78,31 @@ function App() {
     setStats([])
   }
 
-  function handleSelectDifficulty(difficultyKey) {
+  async function handleSelectDifficulty(difficultyKey) {
     setDifficulty(difficultyKey)
-    setCards(createCards(getPairCount(difficultyKey)))
+    setIsLoadingDeck(true)
+    setDeckError(null)
+    const { cards: newCards, error } = await loadDeck(difficultyKey, deckType)
+    setCards(newCards)
+    setDeckError(error)
+    setIsLoadingDeck(false)
     resetGameState()
   }
 
-  function handleNewGame() {
-    setCards(createCards(getPairCount(difficulty)))
+  async function handleNewGame() {
+    setIsLoadingDeck(true)
+    setDeckError(null)
+    const { cards: newCards, error } = await loadDeck(difficulty, deckType)
+    setCards(newCards)
+    setDeckError(error)
+    setIsLoadingDeck(false)
     resetGameState()
   }
 
   function handleChangeDifficulty() {
     setDifficulty(null)
     setCards([])
+    setDeckError(null)
     resetGameState()
   }
 
@@ -120,6 +154,7 @@ function App() {
         <BackgroundDecoration />
         <div className="app">
           <DifficultySelector onSelect={handleSelectDifficulty} />
+          <DeckTypeSelector selectedDeckType={deckType} onSelect={setDeckType} />
           <Stats stats={stats} onClear={handleClearStats} />
         </div>
       </>
@@ -131,15 +166,26 @@ function App() {
       <BackgroundDecoration />
       <div className="app">
         <GameInfo moves={moves} elapsedSeconds={elapsedSeconds} />
-        {isGameWon && (
-          <p className="win-message">🎉 ניצחת! מצאת את כל הזוגות ב-{moves} מהלכים.</p>
+        {deckError && <p className="deck-error-message">{deckError}</p>}
+        {isLoadingDeck ? (
+          <p className="deck-loading-message">טוען חפיסת קלפים...</p>
+        ) : (
+          <>
+            {isGameWon && (
+              <p className="win-message">🎉 ניצחת! מצאת את כל הזוגות ב-{moves} מהלכים.</p>
+            )}
+            <Board cards={cards} onCardClick={handleCardClick} />
+          </>
         )}
-        <Board cards={cards} onCardClick={handleCardClick} />
         <div className="game-actions">
-          <button className="new-game-button" onClick={handleNewGame}>
+          <button className="new-game-button" onClick={handleNewGame} disabled={isLoadingDeck}>
             התחל משחק חדש
           </button>
-          <button className="change-difficulty-button" onClick={handleChangeDifficulty}>
+          <button
+            className="change-difficulty-button"
+            onClick={handleChangeDifficulty}
+            disabled={isLoadingDeck}
+          >
             רמת קושי חדשה
           </button>
         </div>
