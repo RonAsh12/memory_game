@@ -1,4 +1,9 @@
-const CARD_VALUES = ['🐶', '🐱', '🐭', '🐹']
+const CARD_VALUE_POOL = [
+  '🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼',
+  '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵', '🐔',
+  '🐧', '🐦', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗',
+  '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜',
+]
 
 export function shuffleCards(cards) {
   const shuffled = [...cards]
@@ -9,8 +14,9 @@ export function shuffleCards(cards) {
   return shuffled
 }
 
-export function createCards() {
-  const cards = CARD_VALUES.flatMap((value, index) => [
+export function createCards(pairCount = 4) {
+  const values = CARD_VALUE_POOL.slice(0, pairCount)
+  const cards = values.flatMap((value, index) => [
     { id: index * 2, value, isFlipped: false, isMatched: false },
     { id: index * 2 + 1, value, isFlipped: false, isMatched: false },
   ])

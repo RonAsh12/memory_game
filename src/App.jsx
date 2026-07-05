@@ -1,33 +1,52 @@
 import { useEffect, useState } from 'react'
 import GameInfo from './components/GameInfo'
 import Board from './components/Board'
+import DifficultySelector from './components/DifficultySelector'
 import { createCards } from './utils/cards'
+import { getPairCount } from './utils/difficulty'
 import { useTimer } from './hooks/useTimer'
 import './App.css'
 
 const MISMATCH_DELAY_MS = 800
 
 function App() {
-  const [cards, setCards] = useState(createCards)
+  const [difficulty, setDifficulty] = useState(null)
+  const [cards, setCards] = useState([])
   const [selectedIds, setSelectedIds] = useState([])
   const [moves, setMoves] = useState(0)
   const [isComparing, setIsComparing] = useState(false)
   const [hasStarted, setHasStarted] = useState(false)
   const { elapsedSeconds, start, stop, reset } = useTimer()
 
-  const isGameWon = cards.every((card) => card.isMatched)
+  const isGameWon = cards.length > 0 && cards.every((card) => card.isMatched)
 
   useEffect(() => {
     if (isGameWon) stop()
   }, [isGameWon, stop])
 
-  function handleNewGame() {
-    setCards(createCards())
+  function resetGameState() {
     setSelectedIds([])
     setMoves(0)
     setIsComparing(false)
     setHasStarted(false)
     reset()
+  }
+
+  function handleSelectDifficulty(difficultyKey) {
+    setDifficulty(difficultyKey)
+    setCards(createCards(getPairCount(difficultyKey)))
+    resetGameState()
+  }
+
+  function handleNewGame() {
+    setCards(createCards(getPairCount(difficulty)))
+    resetGameState()
+  }
+
+  function handleChangeDifficulty() {
+    setDifficulty(null)
+    setCards([])
+    resetGameState()
   }
 
   function handleCardClick(id) {
@@ -72,6 +91,14 @@ function App() {
     }, MISMATCH_DELAY_MS)
   }
 
+  if (!difficulty) {
+    return (
+      <div className="app">
+        <DifficultySelector onSelect={handleSelectDifficulty} />
+      </div>
+    )
+  }
+
   return (
     <div className="app">
       <GameInfo moves={moves} elapsedSeconds={elapsedSeconds} />
@@ -79,9 +106,14 @@ function App() {
         <p className="win-message">🎉 ניצחת! מצאת את כל הזוגות ב-{moves} מהלכים.</p>
       )}
       <Board cards={cards} onCardClick={handleCardClick} />
-      <button className="new-game-button" onClick={handleNewGame}>
-        התחל משחק חדש
-      </button>
+      <div className="game-actions">
+        <button className="new-game-button" onClick={handleNewGame}>
+          התחל משחק חדש
+        </button>
+        <button className="change-difficulty-button" onClick={handleChangeDifficulty}>
+          רמת קושי חדשה
+        </button>
+      </div>
     </div>
   )
 }
